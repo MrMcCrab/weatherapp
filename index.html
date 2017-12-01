@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <link rel="stylesheet" href="stylesheet.css">
+  </head>
+  <body>
+
+    <div class="container">
+      <div class="row header">
+        <div class="col-md-4">
+
+        </div>
+        <div class="col-md-4">
+
+        </div>
+        <div class="col-md-4">
+
+        </div>
+      </div>
+      <div class="row">
+
+
+        <div class="col-md-4">
+
+        </div>
+
+        <div class="col-md-4" id="data">
+
+          <script type="text/javascript">
+
+          var weather = "http://api.openweathermap.org/data/2.5/weather?q=helsinki&APPID=1ff6524d14e5dd825675a9ae7d29d84c";
+          var testData = "http://localhost/weatherapp/testdata.js";
+
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.open("GET", testData, true);
+            xmlhttp.send();
+
+            xmlhttp.onreadystatechange = function () {
+              if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                var data = JSON.parse(xmlhttp.responseText);
+
+                var sunrise = new Date(data.sys.sunrise * 1000).toString();
+                var sunriset = sunrise.substr(16,5);
+                var sunset = new Date(data.sys.sunset * 1000).toString();
+                var sunsett = sunset.substr(16,5);
+
+
+
+                var table = "<table class='table'>";
+
+                table += "<thead>";
+                table += "<tr>";
+                table += "<th scope='col'>" + "Weather in: " + data.name + "</th>";
+                table += "</tr>";
+                table += "</thead>";
+
+                table += "<tr>";
+                table += "<td>" + "Temperature: " + "</td>";
+                table += "<td>" + (data.main.temp-273.15) + "&#8451" + "</td>";
+                table += "</tr>";
+
+                table += "<tr>";
+                table += "<td>" + "Weather: " + "</td>";
+                table += "<td>" + data.weather[0].description + "</td>";
+                table += "</tr>";
+
+                table += "<tr>";
+                table += "<td>" + "Sunrise: " + "</td>";
+                table += "<td>" + sunriset + "</td>";
+                table += "</tr>";
+
+                table += "<tr>";
+                table += "<td>" + "Sunrise: " + "</td>";
+                table += "<td>" + sunsett + "</td>";
+                table += "</tr>";
+
+                table += "</table>";
+
+
+                document.getElementById('data').innerHTML = table;
+
+                var time = new Date(data.sys.sunrise * 1000);
+
+              }
+            }
+
+          </script>
+        </div>
+
+        <div class="col-md-4">
+
+        </div>
+
+
+      </div>
+    </div>
+
+
+
+    <!-- jQuery first, then Tether, then Bootstrap JS. -->
+    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+  </body>
+</html>
