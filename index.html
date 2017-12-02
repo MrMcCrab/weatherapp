@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
     <link rel="stylesheet" href="stylesheet.css">
   </head>
-  <body>
+  <body onload="listCities()">
 
     <div class="container">
 
@@ -39,15 +39,15 @@
           <div class="input-group">
 
             <div class="dropdown">
-              <button class="btn btn-secondary dropdown-toggle" type="button" onclick="listCities()">Select city</button>
-              <div id="dropdown" class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              <select id="dropdown" class="btn btn-secondary dropdown-toggle" onchange="getLocation2()" type="button">
+                <option value="Select city">Select city</option>
+              </select>
 
-              </div>
             </div>
 
             <input id="input" placeholder="Search..." class="form-control" type="text" name="" value="">
             <span class="input-group-btn">
-              <button class="btn btn-secondary" type="button" onclick="checkWeather()">Search</button>
+              <button class="btn btn-secondary" type="button" onclick="getLocation()">Search</button>
             </span>
           </div>
         </div>
@@ -69,15 +69,28 @@
 
           <script type="text/javascript">
 
-          function checkWeather(){
-
+          function getLocation(){
             var location = document.getElementById('input').value;
+            checkWeather(location);
+          }
+
+          function getLocation2(){
+            var location = document.getElementById('dropdown').value;
+            checkWeather(location);
+          }
+
+
+          function checkWeather(location){
+
+            if(location == "" || location == "Select city"){
+              alert("You must select a location");
+            }else{
 
             var weather = "http://api.openweathermap.org/data/2.5/weather?q=" + location + "&APPID=1ff6524d14e5dd825675a9ae7d29d84c";
             var testData = "http://localhost/weatherapp/testdata.js";
 
               var xmlhttp = new XMLHttpRequest();
-              xmlhttp.open("GET", testData, true);
+              xmlhttp.open("GET", weather, true);
               xmlhttp.send();
 
               xmlhttp.onreadystatechange = function () {
@@ -114,7 +127,7 @@
                   table += "</tr>";
 
                   table += "<tr>";
-                  table += "<td>" + "Sunrise: " + "</td>";
+                  table += "<td>" + "Sunset: " + "</td>";
                   table += "<td>" + sunsett + "</td>";
                   table += "</tr>";
 
@@ -127,9 +140,11 @@
 
                 }
               }
+            }
           }
 
           function listCities(){
+
             var list = "http://localhost/weatherapp/city.list.json";
             var xmlhttp = new XMLHttpRequest;
             var dropdown = document.getElementById('dropdown');
@@ -140,11 +155,16 @@
               if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                 var data = JSON.parse(xmlhttp.responseText);
                 for (var i = 0; i < data.length; i++) {
-
-
+                  // only parses cities in Finland
+                  // parsing all 209 579 cities froze the browser
+                  if(data[i].country == "FI"){
+                  var option = document.createElement("option");
+                  option.setAttribute("value", data[i].name);
+                  option.appendChild(document.createTextNode(data[i].name));
+                  dropdown.appendChild(option);
                 }
+              }
             }
-
           }
         }
 
