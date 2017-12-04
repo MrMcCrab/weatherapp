@@ -69,11 +69,13 @@
 
           <script type="text/javascript">
 
+          // Get location from the input field
           function getLocation(){
             var location = document.getElementById('input').value;
             checkWeather(location);
           }
 
+          // Get location from the dropdown
           function getLocation2(){
             var location = document.getElementById('dropdown').value;
             checkWeather(location);
@@ -86,63 +88,81 @@
               alert("You must select a location");
             }else{
 
-            var weather = "http://api.openweathermap.org/data/2.5/weather?q=" + location + "&APPID=1ff6524d14e5dd825675a9ae7d29d84c";
+              // Testdata was used to decrease the amount of api calls
+            var weather = "http://api.openweathermap.org/data/2.5/weather?q=" + location + "&units=metric&APPID=1ff6524d14e5dd825675a9ae7d29d84c";
             var testData = "http://localhost/weatherapp/testdata.js";
 
               var xmlhttp = new XMLHttpRequest();
               xmlhttp.open("GET", weather, true);
               xmlhttp.send();
 
+              // Print error is response is 404
               xmlhttp.onreadystatechange = function () {
-                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                  var data = JSON.parse(xmlhttp.responseText);
+                if (xmlhttp.status == 404) {
+                  var error = "<table class='table'>";
+                  error += "<thead>";
+                  error += "<tr>";
+                  error += "<th colspan='2'>" + "Invalid location or weather data not found" + "</th>";
+                  error += "</tr>";
+                  error + "</thead>";
+                  error += "</table>";
+                  document.getElementById('data').innerHTML = error;
 
-                  var sunrise = new Date(data.sys.sunrise * 1000).toString();
-                  var sunriset = sunrise.substr(16,5);
-                  var sunset = new Date(data.sys.sunset * 1000).toString();
-                  var sunsett = sunset.substr(16,5);
+                } else if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
 
+                    var data = JSON.parse(xmlhttp.responseText);
+                    console.log(data);
 
-                  var table = "<table class='table'>";
-
-                  table += "<thead>";
-                  table += "<tr>";
-                  table += "<th colspan='2'>" + "Weather in: " + data.name + "</th>";
-                  table += "</tr>";
-                  table += "</thead>";
-
-                  table += "<tr>";
-                  table += "<td>" + "Temperature: " + "</td>";
-                  table += "<td>" + (data.main.temp-273.15) + "&#8451" + "</td>";
-                  table += "</tr>";
-
-                  table += "<tr>";
-                  table += "<td>" + "Weather: " + "</td>";
-                  table += "<td>" + data.weather[0].description + "</td>";
-                  table += "</tr>";
-
-                  table += "<tr>";
-                  table += "<td>" + "Sunrise: " + "</td>";
-                  table += "<td>" + sunriset + "</td>";
-                  table += "</tr>";
-
-                  table += "<tr>";
-                  table += "<td>" + "Sunset: " + "</td>";
-                  table += "<td>" + sunsett + "</td>";
-                  table += "</tr>";
-
-                  table += "</table>";
+                    var sunrise = new Date(data.sys.sunrise * 1000).toString();
+                    var sunriset = sunrise.substr(16,5);
+                    var sunset = new Date(data.sys.sunset * 1000).toString();
+                    var sunsett = sunset.substr(16,5);
 
 
-                  document.getElementById('data').innerHTML = table;
+                    var table = "<table class='table'>";
 
-                  var time = new Date(data.sys.sunrise * 1000);
+                    table += "<thead>";
+                    table += "<tr>";
+                    table += "<th colspan='3'>" + "Weather in: " + data.name + "</th>";
+                    table += "</tr>";
+                    table += "</thead>";
 
+                    table += "<tr>";
+                    table += "<td>" + "Temperature: " + "</td>";
+                    table += "<td>" + data.main.temp + "&#8451" + "</td>";
+                    table += "</tr>";
+
+                    table += "<tr>";
+                    table += "<td class='align-middle'>" + "Weather: " + "</td>";
+                    table += "<td class='align-middle'>" + data.weather[0].description + "</td>";
+                    table += "<td><img src='http://openweathermap.org/img/w/" + data.weather[0].icon + ".png'></td>"
+                    table += "</tr>";
+
+                    table += "<tr>";
+                    table += "<td>" + "Sunrise: " + "</td>";
+                    table += "<td>" + sunriset + "</td>";
+                    table += "<td></td>"
+                    table += "</tr>";
+
+                    table += "<tr>";
+                    table += "<td>" + "Sunset: " + "</td>";
+                    table += "<td>" + sunsett + "</td>";
+                    table += "<td></td>"
+                    table += "</tr>";
+
+                    table += "</table>";
+
+
+                    document.getElementById('data').innerHTML = table;
+
+                  }
                 }
+
               }
             }
-          }
 
+
+            // Funtion parses city.list.json on page load and populates the dropdown
           function listCities(){
 
             var list = "http://localhost/weatherapp/city.list.json";
